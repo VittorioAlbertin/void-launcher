@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Void Launcher</string>
+
+    <!-- Settings -->
+    <string name="settings">settings</string>
+    <string name="homepage_apps">Homepage Apps</string>
+    <string name="homepage_apps_desc">Choose which apps appear on main screen</string>
+    <string name="font_size">Font Size</string>
+    <string name="font_size_desc">Adjust text size</string>
+    <string name="hidden_apps">Hidden Apps</string>
+    <string name="hidden_apps_desc">Hide apps from All Apps list</string>
+
+    <!-- App Selection -->
+    <string name="select_homepage_apps">select homepage apps</string>
+    <string name="select_hidden_apps">select hidden apps</string>
+    <string name="no_apps_selected">No apps selected</string>
+    <string name="apps_selected">%d app(s) selected</string>
+
+    <!-- Font Sizes -->
+    <string name="font_small">Small (14sp)</string>
+    <string name="font_medium">Medium (16sp)</string>
+    <string name="font_large">Large (18sp)</string>
+    <string name="font_xlarge">Extra Large (20sp)</string>
+</resources>

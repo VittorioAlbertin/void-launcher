@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/void_black"
+    android:padding="16dp">
+
+    <!-- Header text -->
+    <TextView
+        android:id="@+id/headerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="void launcher"
+        android:textColor="@color/void_white"
+        android:textSize="16sp"
+        android:fontFamily="monospace"
+        android:layout_marginBottom="8dp"
+        android:layout_alignParentTop="true" />
+
+    <!-- Separator line -->
+    <View
+        android:id="@+id/topSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/void_white"
+        android:layout_below="@id/headerText"
+        android:layout_marginBottom="16dp" />
+
+    <!-- App list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/appRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/topSeparator"
+        android:layout_above="@id/bottomSeparator"
+        android:scrollbars="none"
+        android:overScrollMode="never" />
+
+    <!-- Bottom separator line -->
+    <View
+        android:id="@+id/bottomSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/void_white"
+        android:layout_above="@id/bottomRow"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Bottom row with All Apps and Settings -->
+    <LinearLayout
+        android:id="@+id/bottomRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <!-- All Apps link -->
+        <TextView
+            android:id="@+id/allAppsText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="All Apps >"
+            android:textColor="@color/void_white"
+            android:textSize="16sp"
+            android:fontFamily="monospace"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="4dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <!-- Settings link -->
+        <TextView
+            android:id="@+id/settingsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:textColor="@color/void_white"
+            android:textSize="16sp"
+            android:fontFamily="monospace"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="4dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+</RelativeLayout>

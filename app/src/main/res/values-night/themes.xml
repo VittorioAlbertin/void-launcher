@@ -1,0 +1,19 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- VoidLauncher minimal night theme - pure black, no ActionBar -->
+    <style name="Theme.VoidLauncher" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Pure black theme -->
+        <item name="colorPrimary">@color/void_black</item>
+        <item name="colorPrimaryVariant">@color/void_black</item>
+        <item name="colorOnPrimary">@color/void_white</item>
+        <item name="colorSecondary">@color/void_black</item>
+        <item name="colorSecondaryVariant">@color/void_black</item>
+        <item name="colorOnSecondary">@color/void_white</item>
+        <!-- Black background and status bar -->
+        <item name="android:windowBackground">@color/void_black</item>
+        <item name="android:statusBarColor">@color/void_black</item>
+        <item name="android:navigationBarColor">@color/void_black</item>
+        <!-- Text color -->
+        <item name="android:textColorPrimary">@color/void_white</item>
+        <item name="android:textColorSecondary">@color/void_white</item>
+    </style>
+</resources>

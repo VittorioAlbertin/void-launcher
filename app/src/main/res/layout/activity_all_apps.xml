@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/void_black"
+    android:padding="16dp">
+
+    <!-- Header text -->
+    <TextView
+        android:id="@+id/headerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="all apps"
+        android:textColor="@color/void_white"
+        android:textSize="16sp"
+        android:fontFamily="monospace"
+        android:layout_marginBottom="8dp"
+        android:layout_alignParentTop="true" />
+
+    <!-- Separator line -->
+    <View
+        android:id="@+id/topSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/void_white"
+        android:layout_below="@id/headerText"
+        android:layout_marginBottom="16dp" />
+
+    <!-- All Apps list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/allAppsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/topSeparator"
+        android:scrollbars="none"
+        android:overScrollMode="never" />
+
+</RelativeLayout>

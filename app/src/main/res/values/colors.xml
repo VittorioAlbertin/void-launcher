@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- VoidLauncher minimal color palette -->
+    <color name="void_black">#000000</color>
+    <color name="void_white">#FFFFFF</color>
+
+    <!-- Legacy colors (kept for compatibility) -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+</resources>
