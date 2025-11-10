@@ -26,12 +26,35 @@
         android:layout_below="@id/headerText"
         android:layout_marginBottom="16dp" />
 
+    <!-- Digital clock -->
+    <TextClock
+        android:id="@+id/digitalClock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topSeparator"
+        android:textColor="@color/void_white"
+        android:textSize="24sp"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:format12Hour="hh:mm a"
+        android:format24Hour="HH:mm"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Clock separator line -->
+    <View
+        android:id="@+id/clockSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/void_white"
+        android:layout_below="@id/digitalClock"
+        android:layout_marginBottom="16dp" />
+
     <!-- App list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/appRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/topSeparator"
+        android:layout_below="@id/clockSeparator"
         android:layout_above="@id/bottomSeparator"
         android:scrollbars="none"
         android:overScrollMode="never" />

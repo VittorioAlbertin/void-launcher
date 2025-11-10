@@ -18,6 +18,12 @@ class PreferencesManager(context: Context) {
         private const val KEY_FONT_SIZE = "font_size"
         private const val DEFAULT_FONT_SIZE = 16f
 
+        // Gesture app keys
+        private const val KEY_GESTURE_UP = "gesture_up"
+        private const val KEY_GESTURE_DOWN = "gesture_down"
+        private const val KEY_GESTURE_LEFT = "gesture_left"
+        private const val KEY_GESTURE_RIGHT = "gesture_right"
+
         // Default homepage apps if none are selected
         private val DEFAULT_HOMEPAGE_APPS = listOf(
             "com.instagram.android",
@@ -26,6 +32,12 @@ class PreferencesManager(context: Context) {
             "com.google.android.youtube",
             "com.android.settings"
         )
+
+        // Default gesture apps
+        private const val DEFAULT_GESTURE_UP = "com.android.chrome"
+        private const val DEFAULT_GESTURE_DOWN = "com.android.camera2"
+        private const val DEFAULT_GESTURE_LEFT = "com.whatsapp"
+        private const val DEFAULT_GESTURE_RIGHT = "com.google.android.apps.messaging"
     }
 
     /**
@@ -87,5 +99,57 @@ class PreferencesManager(context: Context) {
      */
     fun isAppOnHomepage(packageName: String): Boolean {
         return getHomepageApps().contains(packageName)
+    }
+
+    /**
+     * Get package name for a gesture direction
+     * Returns null if gesture is disabled
+     */
+    fun getGestureApp(direction: String): String? {
+        val key = when (direction) {
+            "up" -> KEY_GESTURE_UP
+            "down" -> KEY_GESTURE_DOWN
+            "left" -> KEY_GESTURE_LEFT
+            "right" -> KEY_GESTURE_RIGHT
+            else -> return null
+        }
+
+        val saved = prefs.getString(key, null)
+
+        // If nothing saved yet, return default
+        if (saved == null) {
+            return when (direction) {
+                "up" -> DEFAULT_GESTURE_UP
+                "down" -> DEFAULT_GESTURE_DOWN
+                "left" -> DEFAULT_GESTURE_LEFT
+                "right" -> DEFAULT_GESTURE_RIGHT
+                else -> null
+            }
+        }
+
+        // Empty string means disabled
+        return if (saved.isEmpty()) null else saved
+    }
+
+    /**
+     * Save package name for a gesture direction
+     * Pass empty string to disable the gesture
+     */
+    fun saveGestureApp(direction: String, packageName: String) {
+        val key = when (direction) {
+            "up" -> KEY_GESTURE_UP
+            "down" -> KEY_GESTURE_DOWN
+            "left" -> KEY_GESTURE_LEFT
+            "right" -> KEY_GESTURE_RIGHT
+            else -> return
+        }
+        prefs.edit().putString(key, packageName).apply()
+    }
+
+    /**
+     * Check if a gesture is enabled (has an app assigned)
+     */
+    fun isGestureSet(direction: String): Boolean {
+        return getGestureApp(direction) != null
     }
 }

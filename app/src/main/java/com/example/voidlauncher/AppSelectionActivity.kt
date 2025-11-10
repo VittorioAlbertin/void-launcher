@@ -78,7 +78,7 @@ class AppSelectionActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_MAIN, null)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
 
-        val activities = pm.queryIntentActivities(intent, PackageManager.MATCH_ALL)
+        val activities = pm.queryIntentActivities(intent, 0)
 
         for (resolveInfo in activities) {
             val label = resolveInfo.loadLabel(pm).toString()

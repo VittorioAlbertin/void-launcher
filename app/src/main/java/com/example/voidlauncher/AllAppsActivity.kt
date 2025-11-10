@@ -3,9 +3,13 @@ package com.example.voidlauncher
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +19,11 @@ import androidx.recyclerview.widget.RecyclerView
  */
 class AllAppsActivity : AppCompatActivity() {
 
+    private lateinit var searchBar: EditText
     private lateinit var allAppsRecyclerView: RecyclerView
     private lateinit var prefsManager: PreferencesManager
+    private var allApps: List<App> = emptyList()
+    private var filteredApps: List<App> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +34,7 @@ class AllAppsActivity : AppCompatActivity() {
 
         prefsManager = PreferencesManager(this)
 
+        searchBar = findViewById(R.id.searchBar)
         allAppsRecyclerView = findViewById(R.id.allAppsRecyclerView)
 
         // Setup RecyclerView
@@ -34,6 +42,9 @@ class AllAppsActivity : AppCompatActivity() {
 
         // Load all installed apps
         loadAllApps()
+
+        // Setup search functionality
+        setupSearch()
     }
 
     /**
@@ -48,7 +59,7 @@ class AllAppsActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_MAIN, null)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
 
-        val activities = pm.queryIntentActivities(intent, PackageManager.MATCH_ALL)
+        val activities = pm.queryIntentActivities(intent, 0)
 
         for (resolveInfo in activities) {
             val label = resolveInfo.loadLabel(pm).toString()
@@ -67,15 +78,54 @@ class AllAppsActivity : AppCompatActivity() {
         }
 
         // Sort alphabetically by label
-        val sortedApps = apps.sortedBy { it.label.lowercase() }
+        allApps = apps.sortedBy { it.label.lowercase() }
+        filteredApps = allApps
 
-        // Get font size from preferences
+        // Update the display
+        updateAppList()
+    }
+
+    /**
+     * Setup search bar functionality
+     */
+    private fun setupSearch() {
+        searchBar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterApps(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    /**
+     * Filter apps based on search query
+     */
+    private fun filterApps(query: String) {
+        filteredApps = if (query.isEmpty()) {
+            allApps
+        } else {
+            allApps.filter { app ->
+                app.label.contains(query, ignoreCase = true)
+            }
+        }
+        updateAppList()
+    }
+
+    /**
+     * Update the RecyclerView with current filtered apps
+     */
+    private fun updateAppList() {
         val fontSize = prefsManager.getFontSize()
 
-        // Update adapter
-        val adapter = AppAdapter(sortedApps, fontSize) { app ->
-            launchApp(app)
-        }
+        val adapter = AppAdapter(
+            apps = filteredApps,
+            fontSize = fontSize,
+            onAppClick = { app -> launchApp(app) },
+            onAppLongClick = { app -> showAddToHomepageDialog(app) }
+        )
         allAppsRecyclerView.adapter = adapter
     }
 
@@ -90,6 +140,29 @@ class AllAppsActivity : AppCompatActivity() {
                 // Failed to launch app
             }
         }
+    }
+
+    /**
+     * Show dialog to confirm adding app to homepage
+     */
+    private fun showAddToHomepageDialog(app: App) {
+        AlertDialog.Builder(this)
+            .setTitle("Add to Homepage")
+            .setMessage("Add ${app.label} to homepage?")
+            .setPositiveButton("Add") { _, _ ->
+                addToHomepage(app)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    /**
+     * Add an app to the homepage
+     */
+    private fun addToHomepage(app: App) {
+        val currentHomepageApps = prefsManager.getHomepageApps().toMutableSet()
+        currentHomepageApps.add(app.packageName)
+        prefsManager.saveHomepageApps(currentHomepageApps)
     }
 
     /**

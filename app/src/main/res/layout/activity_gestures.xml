@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/settings"
+        android:text="Gestures"
         android:textColor="@color/void_white"
         android:textSize="16sp"
         android:fontFamily="monospace"
@@ -21,13 +21,23 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/void_white"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="16dp" />
 
-    <!-- Settings Content -->
+    <!-- Description -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Swipe on homepage to open apps"
+        android:textColor="@color/void_white"
+        android:textSize="12sp"
+        android:fontFamily="monospace"
+        android:alpha="0.6"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Gestures List -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:scrollbars="none">
 
         <LinearLayout
@@ -35,34 +45,35 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Font Size Setting -->
+            <!-- Swipe Up Gesture -->
             <LinearLayout
-                android:id="@+id/fontSizeOption"
+                android:id="@+id/gestureUpOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:paddingVertical="16dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?android:attr/selectableItemBackground">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/font_size"
+                    android:layout_weight="1"
+                    android:text="Swipe Up"
                     android:textColor="@color/void_white"
                     android:textSize="16sp"
                     android:fontFamily="monospace" />
 
                 <TextView
+                    android:id="@+id/gestureUpValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/font_size_desc"
+                    android:text="Not Set"
                     android:textColor="@color/void_white"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:fontFamily="monospace"
-                    android:alpha="0.6"
-                    android:layout_marginTop="4dp" />
+                    android:alpha="0.6" />
             </LinearLayout>
 
             <!-- Divider -->
@@ -72,34 +83,35 @@
                 android:background="@color/void_white"
                 android:alpha="0.2" />
 
-            <!-- Gestures Setting -->
+            <!-- Swipe Down Gesture -->
             <LinearLayout
-                android:id="@+id/gesturesOption"
+                android:id="@+id/gestureDownOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:paddingVertical="16dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?android:attr/selectableItemBackground">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Gestures"
+                    android:layout_weight="1"
+                    android:text="Swipe Down"
                     android:textColor="@color/void_white"
                     android:textSize="16sp"
                     android:fontFamily="monospace" />
 
                 <TextView
+                    android:id="@+id/gestureDownValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Swipe on homepage to open apps"
+                    android:text="Not Set"
                     android:textColor="@color/void_white"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:fontFamily="monospace"
-                    android:alpha="0.6"
-                    android:layout_marginTop="4dp" />
+                    android:alpha="0.6" />
             </LinearLayout>
 
             <!-- Divider -->
@@ -109,34 +121,35 @@
                 android:background="@color/void_white"
                 android:alpha="0.2" />
 
-            <!-- Hidden Apps Setting -->
+            <!-- Swipe Left Gesture -->
             <LinearLayout
-                android:id="@+id/hiddenAppsOption"
+                android:id="@+id/gestureLeftOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:paddingVertical="16dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?android:attr/selectableItemBackground">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/hidden_apps"
+                    android:layout_weight="1"
+                    android:text="Swipe Left"
                     android:textColor="@color/void_white"
                     android:textSize="16sp"
                     android:fontFamily="monospace" />
 
                 <TextView
+                    android:id="@+id/gestureLeftValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/hidden_apps_desc"
+                    android:text="Not Set"
                     android:textColor="@color/void_white"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:fontFamily="monospace"
-                    android:alpha="0.6"
-                    android:layout_marginTop="4dp" />
+                    android:alpha="0.6" />
             </LinearLayout>
 
             <!-- Divider -->
@@ -146,34 +159,35 @@
                 android:background="@color/void_white"
                 android:alpha="0.2" />
 
-            <!-- Set as Default Launcher Setting -->
+            <!-- Swipe Right Gesture -->
             <LinearLayout
-                android:id="@+id/defaultLauncherOption"
+                android:id="@+id/gestureRightOption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:paddingVertical="16dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?android:attr/selectableItemBackground">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Set as Default Launcher"
+                    android:layout_weight="1"
+                    android:text="Swipe Right"
                     android:textColor="@color/void_white"
                     android:textSize="16sp"
                     android:fontFamily="monospace" />
 
                 <TextView
+                    android:id="@+id/gestureRightValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Open system settings to set as default"
+                    android:text="Not Set"
                     android:textColor="@color/void_white"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:fontFamily="monospace"
-                    android:alpha="0.6"
-                    android:layout_marginTop="4dp" />
+                    android:alpha="0.6" />
             </LinearLayout>
 
         </LinearLayout>

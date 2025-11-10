@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 class AppAdapter(
     private val apps: List<App>,
     private val fontSize: Float = 16f,
-    private val onAppClick: (App) -> Unit
+    private val onAppClick: (App) -> Unit,
+    private val onAppLongClick: ((App) -> Unit)? = null
 ) : RecyclerView.Adapter<AppAdapter.AppViewHolder>() {
 
     class AppViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -32,6 +33,11 @@ class AppAdapter(
 
         holder.itemView.setOnClickListener {
             onAppClick(app)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            onAppLongClick?.invoke(app)
+            true
         }
     }
 

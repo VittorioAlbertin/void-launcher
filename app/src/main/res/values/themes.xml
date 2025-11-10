@@ -15,5 +15,38 @@
         <!-- Text color -->
         <item name="android:textColorPrimary">@color/void_white</item>
         <item name="android:textColorSecondary">@color/void_white</item>
+        <!-- Dialog theme -->
+        <item name="alertDialogTheme">@style/VoidAlertDialog</item>
+    </style>
+
+    <!-- Alert Dialog theme for minimal void aesthetic -->
+    <style name="VoidAlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="colorSurface">@color/void_black</item>
+        <item name="colorOnSurface">@color/void_white</item>
+        <item name="android:textColorPrimary">@color/void_white</item>
+        <item name="android:textColorSecondary">@color/void_white</item>
+        <item name="android:textColorAlertDialogListItem">@color/void_white</item>
+        <item name="android:background">@color/void_black</item>
+        <item name="buttonBarNegativeButtonStyle">@style/VoidDialogButton</item>
+        <item name="buttonBarPositiveButtonStyle">@style/VoidDialogButton</item>
+        <item name="colorControlNormal">@color/void_white</item>
+        <item name="colorControlActivated">@color/void_white</item>
+        <item name="android:checkedTextViewStyle">@style/VoidCheckedTextView</item>
+    </style>
+
+    <!-- Dialog button style -->
+    <style name="VoidDialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/void_white</item>
+    </style>
+
+    <!-- CheckedTextView style for dialog single choice items -->
+    <style name="VoidCheckedTextView">
+        <item name="android:textColor">@color/void_white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 </resources>
