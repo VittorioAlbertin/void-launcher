@@ -11,8 +11,12 @@ import android.view.WindowInsetsController
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * All Apps screen showing full list of installed apps
@@ -51,38 +55,26 @@ class AllAppsActivity : AppCompatActivity() {
      * Load all installed launchable apps (excluding hidden ones)
      */
     private fun loadAllApps() {
-        val pm = packageManager
-        val apps = mutableListOf<App>()
-        val hiddenPackages = prefsManager.getHiddenApps()
-
-        // Get all apps with a launcher intent
-        val intent = Intent(Intent.ACTION_MAIN, null)
-        intent.addCategory(Intent.CATEGORY_LAUNCHER)
-
-        val activities = pm.queryIntentActivities(intent, 0)
-
-        for (resolveInfo in activities) {
-            val label = resolveInfo.loadLabel(pm).toString()
-            val packageName = resolveInfo.activityInfo.packageName
-
-            // Skip hidden apps
-            if (hiddenPackages.contains(packageName)) {
-                continue
-            }
-
-            val launchIntent = pm.getLaunchIntentForPackage(packageName)
-
-            if (launchIntent != null) {
-                apps.add(App(label, packageName, launchIntent))
-            }
+        // Check cache first for instant display
+        val cachedApps = AppCache.getCachedApps()
+        if (cachedApps != null) {
+            // Use cached apps - instant display!
+            allApps = cachedApps
+            filteredApps = allApps
+            updateAppList()
+            return
         }
 
-        // Sort alphabetically by label
-        allApps = apps.sortedBy { it.label.lowercase() }
-        filteredApps = allApps
+        // Fallback: load apps if cache is not available (shouldn't happen normally)
+        lifecycleScope.launch {
+            AppCache.loadAndCacheApps(this@AllAppsActivity, prefsManager)
+            val apps = AppCache.getCachedApps() ?: emptyList()
 
-        // Update the display
-        updateAppList()
+            // Update UI on main thread
+            allApps = apps
+            filteredApps = allApps
+            updateAppList()
+        }
     }
 
     /**
@@ -191,7 +183,7 @@ class AllAppsActivity : AppCompatActivity() {
         super.onResume()
         // Re-hide system UI when returning from other apps
         hideSystemUI()
-        // Reload apps in case hidden apps changed
+        // Reload apps in case hidden apps changed (uses cache if available)
         loadAllApps()
     }
 }

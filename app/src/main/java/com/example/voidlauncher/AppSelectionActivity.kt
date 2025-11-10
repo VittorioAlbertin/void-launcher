@@ -3,9 +3,12 @@ package com.example.voidlauncher
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,11 +20,14 @@ import androidx.recyclerview.widget.RecyclerView
 class AppSelectionActivity : AppCompatActivity() {
 
     private lateinit var headerText: TextView
+    private lateinit var searchBar: EditText
     private lateinit var recyclerView: RecyclerView
     private lateinit var prefsManager: PreferencesManager
     private lateinit var adapter: SelectableAppAdapter
 
     private var selectionMode: SelectionMode = SelectionMode.HOMEPAGE
+    private var allSelectableApps: List<SelectableApp> = emptyList()
+    private var filteredSelectableApps: List<SelectableApp> = emptyList()
 
     enum class SelectionMode {
         HOMEPAGE,
@@ -43,6 +49,7 @@ class AppSelectionActivity : AppCompatActivity() {
         prefsManager = PreferencesManager(this)
 
         headerText = findViewById(R.id.headerText)
+        searchBar = findViewById(R.id.searchBar)
         recyclerView = findViewById(R.id.appSelectionRecyclerView)
 
         // Determine selection mode from intent
@@ -62,8 +69,50 @@ class AppSelectionActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Load all apps with selection state
-        val selectableApps = loadSelectableApps()
-        adapter = SelectableAppAdapter(selectableApps)
+        allSelectableApps = loadSelectableApps()
+        filteredSelectableApps = allSelectableApps
+
+        // Setup search functionality
+        setupSearch()
+
+        // Display apps
+        updateAppList()
+    }
+
+    /**
+     * Setup search bar functionality
+     */
+    private fun setupSearch() {
+        searchBar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterApps(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    /**
+     * Filter apps based on search query
+     */
+    private fun filterApps(query: String) {
+        filteredSelectableApps = if (query.isEmpty()) {
+            allSelectableApps
+        } else {
+            allSelectableApps.filter { selectableApp ->
+                selectableApp.app.label.contains(query, ignoreCase = true)
+            }
+        }
+        updateAppList()
+    }
+
+    /**
+     * Update the RecyclerView with current filtered apps
+     */
+    private fun updateAppList() {
+        adapter = SelectableAppAdapter(filteredSelectableApps)
         recyclerView.adapter = adapter
     }
 

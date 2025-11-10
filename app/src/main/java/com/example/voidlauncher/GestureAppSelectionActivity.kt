@@ -3,9 +3,12 @@ package com.example.voidlauncher
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,9 +20,12 @@ import androidx.recyclerview.widget.RecyclerView
 class GestureAppSelectionActivity : AppCompatActivity() {
 
     private lateinit var headerText: TextView
+    private lateinit var searchBar: EditText
     private lateinit var recyclerView: RecyclerView
     private lateinit var prefsManager: PreferencesManager
     private lateinit var direction: String
+    private var allApps: List<App> = emptyList()
+    private var filteredApps: List<App> = emptyList()
 
     companion object {
         const val EXTRA_DIRECTION = "direction"
@@ -37,6 +43,7 @@ class GestureAppSelectionActivity : AppCompatActivity() {
         direction = intent.getStringExtra(EXTRA_DIRECTION) ?: "up"
 
         headerText = findViewById(R.id.headerText)
+        searchBar = findViewById(R.id.searchBar)
         recyclerView = findViewById(R.id.gestureAppRecyclerView)
 
         // Set header text based on direction
@@ -46,11 +53,61 @@ class GestureAppSelectionActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Load all apps with "None" option
-        val apps = loadAllApps()
+        allApps = loadAllApps()
+        filteredApps = allApps
+
+        // Setup search functionality
+        setupSearch()
+
+        // Display apps
+        updateAppList()
+    }
+
+    /**
+     * Setup search bar functionality
+     */
+    private fun setupSearch() {
+        searchBar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterApps(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    /**
+     * Filter apps based on search query
+     */
+    private fun filterApps(query: String) {
+        filteredApps = if (query.isEmpty()) {
+            allApps
+        } else {
+            // Keep "None" option if it exists, and filter the rest
+            val noneOption = allApps.firstOrNull { it.packageName == "none" }
+            val filteredList = allApps.filter { app ->
+                app.packageName != "none" && app.label.contains(query, ignoreCase = true)
+            }
+
+            if (noneOption != null) {
+                listOf(noneOption) + filteredList
+            } else {
+                filteredList
+            }
+        }
+        updateAppList()
+    }
+
+    /**
+     * Update the RecyclerView with current filtered apps
+     */
+    private fun updateAppList() {
         val fontSize = prefsManager.getFontSize()
 
         val adapter = AppAdapter(
-            apps = apps,
+            apps = filteredApps,
             fontSize = fontSize,
             onAppClick = { app ->
                 // Save selection and finish

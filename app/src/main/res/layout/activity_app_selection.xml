@@ -25,12 +25,39 @@
         android:layout_below="@id/headerText"
         android:layout_marginBottom="16dp" />
 
+    <!-- Search bar -->
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topSeparator"
+        android:hint="search..."
+        android:textColor="@color/void_white"
+        android:textColorHint="@color/void_white"
+        android:textSize="14sp"
+        android:fontFamily="monospace"
+        android:background="@android:color/transparent"
+        android:paddingVertical="8dp"
+        android:layout_marginBottom="8dp"
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:maxLines="1" />
+
+    <!-- Search separator -->
+    <View
+        android:id="@+id/searchSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/void_white"
+        android:layout_below="@id/searchBar"
+        android:layout_marginBottom="16dp" />
+
     <!-- App list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/appSelectionRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/topSeparator"
+        android:layout_below="@id/searchSeparator"
         android:scrollbars="none"
         android:overScrollMode="never" />
 

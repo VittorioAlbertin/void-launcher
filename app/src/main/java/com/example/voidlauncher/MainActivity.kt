@@ -11,8 +11,10 @@ import android.widget.TextView
 import android.widget.TextClock
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 /**
@@ -65,6 +67,9 @@ class MainActivity : AppCompatActivity() {
 
         // Load homepage apps
         loadHomepageApps()
+
+        // Preload all apps in background for instant "all apps" display
+        preloadAllApps()
     }
 
     /**
@@ -103,6 +108,15 @@ class MainActivity : AppCompatActivity() {
             onAppLongClick = { app -> showRemoveFromHomepageDialog(app) }
         )
         appRecyclerView.adapter = adapter
+    }
+
+    /**
+     * Preload all apps in background for instant "all apps" display
+     */
+    private fun preloadAllApps() {
+        lifecycleScope.launch {
+            AppCache.loadAndCacheApps(this@MainActivity, prefsManager)
+        }
     }
 
     /**
@@ -257,5 +271,7 @@ class MainActivity : AppCompatActivity() {
         hideSystemUI()
         // Reload apps in case settings changed
         loadHomepageApps()
+        // Refresh app cache for newly installed/uninstalled apps
+        preloadAllApps()
     }
 }
