@@ -120,6 +120,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * Check if any gesture is set to open All Apps and hide/show button accordingly
+     */
+    private fun updateAllAppsButtonVisibility() {
+        val directions = listOf("up", "down", "left", "right")
+        val hasAllAppsGesture = directions.any { direction ->
+            prefsManager.getGestureApp(direction) == GestureAppSelectionActivity.ALL_APPS_IDENTIFIER
+        }
+
+        // Hide button if any gesture opens All Apps, show otherwise
+        allAppsText.visibility = if (hasAllAppsGesture) View.GONE else View.VISIBLE
+    }
+
+    /**
      * Launch an app
      */
     private fun launchApp(app: App) {
@@ -180,6 +193,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * Handle gesture action - either open All Apps or launch an app
+     */
+    private fun handleGestureAction(direction: String) {
+        val gestureApp = prefsManager.getGestureApp(direction)
+        if (gestureApp != null) {
+            if (gestureApp == GestureAppSelectionActivity.ALL_APPS_IDENTIFIER) {
+                // Open All Apps activity
+                val intent = Intent(this, AllAppsActivity::class.java)
+                startActivity(intent)
+            } else {
+                // Launch regular app
+                launchAppByPackageName(gestureApp)
+            }
+        }
+    }
+
+    /**
      * Launch an app by package name (for gestures)
      */
     private fun launchAppByPackageName(packageName: String) {
@@ -218,10 +248,10 @@ class MainActivity : AppCompatActivity() {
                 if (abs(diffX) > SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                     if (diffX > 0) {
                         // Swipe right
-                        prefsManager.getGestureApp("right")?.let { launchAppByPackageName(it) }
+                        handleGestureAction("right")
                     } else {
                         // Swipe left
-                        prefsManager.getGestureApp("left")?.let { launchAppByPackageName(it) }
+                        handleGestureAction("left")
                     }
                     return true
                 }
@@ -230,10 +260,10 @@ class MainActivity : AppCompatActivity() {
                 if (abs(diffY) > SWIPE_THRESHOLD && abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
                     if (diffY > 0) {
                         // Swipe down
-                        prefsManager.getGestureApp("down")?.let { launchAppByPackageName(it) }
+                        handleGestureAction("down")
                     } else {
                         // Swipe up
-                        prefsManager.getGestureApp("up")?.let { launchAppByPackageName(it) }
+                        handleGestureAction("up")
                     }
                     return true
                 }
@@ -273,5 +303,7 @@ class MainActivity : AppCompatActivity() {
         loadHomepageApps()
         // Refresh app cache for newly installed/uninstalled apps
         preloadAllApps()
+        // Update All Apps button visibility based on gestures
+        updateAllAppsButtonVisibility()
     }
 }

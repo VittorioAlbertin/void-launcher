@@ -15,17 +15,20 @@ VoidLauncher acts as a gateway, not a playground. You access only deliberately c
 ### Core Experience
 - **Pure Minimal Aesthetic**: Black (#000000) background with white (#FFFFFF) monospaced text
 - **Digital Clock**: Centered clock on homepage for time awareness
-- **Gesture Navigation**: Swipe up/down/left/right to launch frequently used apps
+- **Gesture Navigation**: Swipe up/down/left/right to launch apps or open All Apps menu
 - **Smart App Management**: Long press to add/remove apps from homepage
-- **Search Functionality**: Real-time search in All Apps menu
+- **Universal Search**: Real-time search in All Apps, gesture selection, and hidden apps menus
+- **Instant Performance**: Preloaded app cache ensures zero-delay menu opening
+- **Adaptive UI**: "All Apps" button auto-hides when gesture is configured for cleaner interface
 - **No Visual Clutter**: No icons, animations, sounds, or unnecessary graphics
 - **Hidden System UI**: Status and navigation bars hidden for maximum immersion
 
 ### Customization
 - **Adjustable Font Size**: 4 presets + custom size input (8-32sp)
-- **Gesture Shortcuts**: Configure 4 swipe directions to launch any app
-- **Hidden Apps**: Hide specific apps from the "All Apps" list
+- **Gesture Shortcuts**: Configure 4 swipe directions to launch apps or open All Apps menu
+- **Hidden Apps**: Hide specific apps with searchable selection interface
 - **Flexible Homepage**: Add/remove apps via intuitive long press
+- **Smart Auto-Hide**: "All Apps" button automatically hides when assigned to a gesture
 
 ## Screenshots
 
@@ -73,18 +76,23 @@ search...
 ### Homepage
 - **Tap app**: Launch the app
 - **Long press app**: Remove from homepage
-- **Swipe up/down/left/right**: Launch configured gesture app (on clock/app list area)
+- **Swipe up/down/left/right**: Launch configured gesture app or open All Apps (on clock/app list area)
 - **Clock**: Displays current time (updates automatically)
+- **All Apps button**: Automatically hides if any gesture is set to open All Apps
 
 ### All Apps Menu
-- **Search bar**: Type to filter apps in real-time
+- **Search bar**: Type to filter apps in real-time (instant results)
 - **Tap app**: Launch the app
 - **Long press app**: Add to homepage
+- **Preloaded apps**: Opens instantly with zero delay
 
 ### Settings
 - **Font Size**: Choose from presets or enter custom size (8-32sp)
 - **Gestures**: Configure swipe shortcuts for 4 directions
-- **Hidden Apps**: Select apps to hide from All Apps menu
+  - Choose "None (Disable)" to disable a gesture
+  - Choose "All Apps" to open All Apps menu with that gesture
+  - Choose any app to launch it with that gesture
+- **Hidden Apps**: Select apps to hide from All Apps menu (searchable)
 - **Set as Default Launcher**: Open system settings to set as default
 
 ## Technical Details
@@ -92,21 +100,29 @@ search...
 - **Language**: Kotlin
 - **Minimum SDK**: 24 (Android 7.0)
 - **Target SDK**: 36
-- **Dependencies**: AndroidX only (Material Components for dialogs)
+- **Dependencies**: AndroidX, Kotlin Coroutines, Lifecycle Runtime KTX
 - **Permissions**: `QUERY_ALL_PACKAGES` (for Android 11+ package visibility)
 - **Architecture**: MVVM-like with SharedPreferences persistence
+- **Performance**: Background app preloading with coroutines for instant UI response
+- **Caching**: Thread-safe singleton app cache for zero-delay All Apps opening
 
 ## Architecture
 
 ```
 MainActivity                → Homepage with clock, apps, and gesture detection
-AllAppsActivity             → Full app list with search functionality
+                              - Preloads apps on startup for instant All Apps access
+                              - Auto-hides "All Apps" button when gesture is configured
+AllAppsActivity             → Full app list with instant display and search
+                              - Uses cached app data for zero-delay opening
 SettingsActivity            → Settings menu
-GesturesActivity            → Gesture configuration screen
-AppSelectionActivity        → App picker for hidden apps
-GestureAppSelectionActivity → App picker for gesture shortcuts
-PreferencesManager          → SharedPreferences storage
+GesturesActivity            → Gesture configuration screen with "All Apps" option
+AppSelectionActivity        → App picker for hidden apps (with search)
+GestureAppSelectionActivity → App picker for gesture shortcuts (with search)
+                              - Includes "None (Disable)" and "All Apps" options
+PreferencesManager          → SharedPreferences storage for all settings
+AppCache                    → Thread-safe singleton for preloaded app list
 AppAdapter                  → RecyclerView adapter for app lists
+SelectableAppAdapter        → RecyclerView adapter with checkboxes for selection
 ```
 
 ## Design Principles
@@ -115,7 +131,8 @@ AppAdapter                  → RecyclerView adapter for app lists
 |-----------|-------------|
 | **Void Aesthetic** | No graphics, only text on black |
 | **Intentional Use** | Only chosen apps appear |
-| **Instant Response** | Immediate reaction to touch |
+| **Instant Response** | Zero-delay app loading with background preloading |
+| **Adaptive UI** | Interface elements hide when no longer needed |
 | **Silence** | No animations, sounds, or clutter |
 
 ## Roadmap
@@ -127,7 +144,9 @@ AppAdapter                  → RecyclerView adapter for app lists
 
 **Phase 2 – UX Enhancements** ✅
 - Gesture navigation (swipe shortcuts)
-- Search functionality in All Apps
+- Gesture-based "All Apps" access with smart button auto-hide
+- Universal search in All Apps, gestures, and hidden apps menus
+- Performance optimization with app preloading and caching
 - Long press to add/remove homepage apps
 - Digital clock on homepage
 - Custom font size input

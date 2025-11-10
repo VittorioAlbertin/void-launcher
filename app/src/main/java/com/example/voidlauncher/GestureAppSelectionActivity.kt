@@ -29,6 +29,7 @@ class GestureAppSelectionActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_DIRECTION = "direction"
+        const val ALL_APPS_IDENTIFIER = "com.voidlauncher.ALL_APPS"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,17 +86,17 @@ class GestureAppSelectionActivity : AppCompatActivity() {
         filteredApps = if (query.isEmpty()) {
             allApps
         } else {
-            // Keep "None" option if it exists, and filter the rest
+            // Keep "None" and "All Apps" options at the top, and filter the rest
             val noneOption = allApps.firstOrNull { it.packageName == "none" }
+            val allAppsOption = allApps.firstOrNull { it.packageName == ALL_APPS_IDENTIFIER }
             val filteredList = allApps.filter { app ->
-                app.packageName != "none" && app.label.contains(query, ignoreCase = true)
+                app.packageName != "none" &&
+                app.packageName != ALL_APPS_IDENTIFIER &&
+                app.label.contains(query, ignoreCase = true)
             }
 
-            if (noneOption != null) {
-                listOf(noneOption) + filteredList
-            } else {
-                filteredList
-            }
+            val topOptions = listOfNotNull(noneOption, allAppsOption)
+            topOptions + filteredList
         }
         updateAppList()
     }
@@ -111,11 +112,19 @@ class GestureAppSelectionActivity : AppCompatActivity() {
             fontSize = fontSize,
             onAppClick = { app ->
                 // Save selection and finish
-                if (app.packageName == "none") {
-                    // Disable gesture
-                    prefsManager.saveGestureApp(direction, "")
-                } else {
-                    prefsManager.saveGestureApp(direction, app.packageName)
+                when (app.packageName) {
+                    "none" -> {
+                        // Disable gesture
+                        prefsManager.saveGestureApp(direction, "")
+                    }
+                    ALL_APPS_IDENTIFIER -> {
+                        // Set to open All Apps
+                        prefsManager.saveGestureApp(direction, ALL_APPS_IDENTIFIER)
+                    }
+                    else -> {
+                        // Launch regular app
+                        prefsManager.saveGestureApp(direction, app.packageName)
+                    }
                 }
                 finish()
             }
@@ -124,7 +133,7 @@ class GestureAppSelectionActivity : AppCompatActivity() {
     }
 
     /**
-     * Load all installed apps plus "None" option
+     * Load all installed apps plus "None" and "All Apps" options
      */
     private fun loadAllApps(): List<App> {
         val pm = packageManager
@@ -132,6 +141,9 @@ class GestureAppSelectionActivity : AppCompatActivity() {
 
         // Add "None (Disable)" option at the top
         apps.add(App("None (Disable)", "none", null))
+
+        // Add "All Apps" option
+        apps.add(App("All Apps", ALL_APPS_IDENTIFIER, null))
 
         // Get all apps with a launcher intent
         val intent = Intent(Intent.ACTION_MAIN, null)
@@ -149,11 +161,12 @@ class GestureAppSelectionActivity : AppCompatActivity() {
             }
         }
 
-        // Sort alphabetically (but keep "None" at the top)
-        val noneOption = apps.first()
-        val sortedApps = apps.drop(1).sortedBy { it.label.lowercase() }
+        // Sort alphabetically (but keep "None" and "All Apps" at the top)
+        val noneOption = apps[0]
+        val allAppsOption = apps[1]
+        val sortedApps = apps.drop(2).sortedBy { it.label.lowercase() }
 
-        return listOf(noneOption) + sortedApps
+        return listOf(noneOption, allAppsOption) + sortedApps
     }
 
     /**

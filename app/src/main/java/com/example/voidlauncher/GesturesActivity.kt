@@ -88,14 +88,16 @@ class GesturesActivity : AppCompatActivity() {
      */
     private fun getGestureAppName(direction: String): String {
         val packageName = prefsManager.getGestureApp(direction)
-        return if (packageName == null) {
-            "Not Set"
-        } else {
-            try {
-                val appInfo = packageManager.getApplicationInfo(packageName, 0)
-                packageManager.getApplicationLabel(appInfo).toString()
-            } catch (e: Exception) {
-                "Not Set"
+        return when (packageName) {
+            null -> "Not Set"
+            GestureAppSelectionActivity.ALL_APPS_IDENTIFIER -> "All Apps"
+            else -> {
+                try {
+                    val appInfo = packageManager.getApplicationInfo(packageName, 0)
+                    packageManager.getApplicationLabel(appInfo).toString()
+                } catch (e: Exception) {
+                    "Not Set"
+                }
             }
         }
     }
