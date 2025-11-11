@@ -28,9 +28,9 @@ VoidLauncher acts as a gateway, not a playground. You access only deliberately c
 - **Adjustable Font Size**: 4 presets + custom size input (8-32sp)
 - **Gesture Shortcuts**: Configure 4 swipe directions to launch apps or open All Apps menu
 - **Hidden Apps**: Hide specific apps with searchable selection interface
-- **Automatic App Hiding**: Apps added to homepage are automatically hidden from All Apps menu
 - **Flexible Homepage**: Add/remove apps via intuitive long press
 - **Smart Auto-Hide**: "All Apps" button automatically hides when assigned to a gesture
+- **Intelligent Auto-Hide**: Automatically hide apps from All Apps menu based on usage time, open frequency, or time of day
 
 ## Screenshots
 
@@ -78,7 +78,7 @@ search...
 ### Homepage
 - **Tap app**: Launch the app
 - **Double tap anywhere**: Lock the device instantly
-- **Long press app**: Remove from homepage (also unhides app in All Apps menu)
+- **Long press app**: Remove from homepage
 - **Swipe up/down/left/right**: Launch configured gesture app or open All Apps (on clock/app list area)
 - **Clock**: Displays current time (updates automatically)
 - **All Apps button**: Automatically hides if any gesture is set to open All Apps
@@ -86,9 +86,9 @@ search...
 ### All Apps Menu
 - **Search bar**: Type to filter apps in real-time (instant results)
 - **Tap app**: Launch the app
-- **Long press app**: Add to homepage (automatically hides app from All Apps)
+- **Long press app**: Opens dialog to add/remove from homepage, configure auto-hide options, and visualize usage data
 - **Preloaded apps**: Opens instantly with zero delay
-- **Automatic hiding**: Apps added to homepage are automatically hidden from this menu
+- **Intelligent auto-hide**: Apps can be automatically hidden based on excessive usage time, open frequency, or during specified hours
 
 ### Settings
 - **Font Size**: Choose from presets or enter custom size (8-32sp)
@@ -96,7 +96,7 @@ search...
   - Choose "None (Disable)" to disable a gesture
   - Choose "All Apps" to open All Apps menu with that gesture
   - Choose any app to launch it with that gesture
-- **Hidden Apps**: Select apps to hide from All Apps menu (searchable)
+- **Hidden Apps**: Show apps hidden from All Apps menu (searchable)
 - **Set as Default Launcher**: Open system settings to set as default
 
 ## Technical Details
@@ -155,9 +155,9 @@ SelectableAppAdapter        → RecyclerView adapter with checkboxes for selecti
 - Digital clock on homepage
 - Custom font size input
 
-**Phase 3 – Advanced** (Future)
+**Phase 3 – Advanced** (WIP)
 - App usage statistics
-- Focus mode / time-based app hiding
+- Intelligent auto-hide based on usage time, frequency, and time of day
 - Randomized app order option
 - Custom color schemes
 - Minimal widget support
