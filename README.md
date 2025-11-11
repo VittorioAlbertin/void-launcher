@@ -15,6 +15,7 @@ VoidLauncher acts as a gateway, not a playground. You access only deliberately c
 ### Core Experience
 - **Pure Minimal Aesthetic**: Black (#000000) background with white (#FFFFFF) monospaced text
 - **Digital Clock**: Centered clock on homepage for time awareness
+- **Double Tap to Lock**: Double tap anywhere on homepage to instantly lock your device
 - **Gesture Navigation**: Swipe up/down/left/right to launch apps or open All Apps menu
 - **Smart App Management**: Long press to add/remove apps from homepage
 - **Universal Search**: Real-time search in All Apps, gesture selection, and hidden apps menus
@@ -27,6 +28,7 @@ VoidLauncher acts as a gateway, not a playground. You access only deliberately c
 - **Adjustable Font Size**: 4 presets + custom size input (8-32sp)
 - **Gesture Shortcuts**: Configure 4 swipe directions to launch apps or open All Apps menu
 - **Hidden Apps**: Hide specific apps with searchable selection interface
+- **Automatic App Hiding**: Apps added to homepage are automatically hidden from All Apps menu
 - **Flexible Homepage**: Add/remove apps via intuitive long press
 - **Smart Auto-Hide**: "All Apps" button automatically hides when assigned to a gesture
 
@@ -75,7 +77,8 @@ search...
 
 ### Homepage
 - **Tap app**: Launch the app
-- **Long press app**: Remove from homepage
+- **Double tap anywhere**: Lock the device instantly
+- **Long press app**: Remove from homepage (also unhides app in All Apps menu)
 - **Swipe up/down/left/right**: Launch configured gesture app or open All Apps (on clock/app list area)
 - **Clock**: Displays current time (updates automatically)
 - **All Apps button**: Automatically hides if any gesture is set to open All Apps
@@ -83,8 +86,9 @@ search...
 ### All Apps Menu
 - **Search bar**: Type to filter apps in real-time (instant results)
 - **Tap app**: Launch the app
-- **Long press app**: Add to homepage
+- **Long press app**: Add to homepage (automatically hides app from All Apps)
 - **Preloaded apps**: Opens instantly with zero delay
+- **Automatic hiding**: Apps added to homepage are automatically hidden from this menu
 
 ### Settings
 - **Font Size**: Choose from presets or enter custom size (8-32sp)
