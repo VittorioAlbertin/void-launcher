@@ -1,5 +1,7 @@
 # Built application files
 *.apk
+# Exception: allow APKs in releases folder
+!releases/*.apk
 *.aar
 *.ap_
 *.aab

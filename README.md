@@ -67,11 +67,13 @@ search...
 
 ### From APK
 
-1. Download the latest APK from [Releases](../../releases)
+1. Download the latest APK from the `releases/` folder in this repository
 2. Install on your Android device
 3. Grant "Query All Packages" permission (required for Android 11+)
 4. Go to **Settings → Set as Default Launcher** (or use system settings)
 5. Select **Void Launcher** as your home app
+
+See [QUICKSTART.md](QUICKSTART.md) for detailed installation and setup instructions.
 
 ## Usage
 
