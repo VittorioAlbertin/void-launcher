@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="8dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- App name -->
+    <TextView
+        android:id="@+id/appNameText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/void_white"
+        android:textSize="16sp"
+        android:fontFamily="monospace"
+        android:text="App Name" />
+
+    <!-- Rules summary -->
+    <TextView
+        android:id="@+id/rulesSummaryText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/void_white"
+        android:textSize="12sp"
+        android:fontFamily="monospace"
+        android:alpha="0.6"
+        android:layout_marginTop="2dp"
+        android:text="No rules" />
+
+    <!-- Status (currently hidden or not) -->
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/void_white"
+        android:textSize="12sp"
+        android:fontFamily="monospace"
+        android:alpha="0.8"
+        android:layout_marginTop="2dp"
+        android:text="Currently hidden"
+        android:visibility="gone" />
+
+</LinearLayout>

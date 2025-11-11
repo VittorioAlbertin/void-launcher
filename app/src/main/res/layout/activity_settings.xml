@@ -72,6 +72,43 @@
                 android:background="@color/void_white"
                 android:alpha="0.2" />
 
+            <!-- Clock Settings -->
+            <LinearLayout
+                android:id="@+id/clockSettingsOption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clock"
+                    android:textColor="@color/void_white"
+                    android:textSize="16sp"
+                    android:fontFamily="monospace" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Show/hide date and customize clock"
+                    android:textColor="@color/void_white"
+                    android:textSize="12sp"
+                    android:fontFamily="monospace"
+                    android:alpha="0.6"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/void_white"
+                android:alpha="0.2" />
+
             <!-- Gestures Setting -->
             <LinearLayout
                 android:id="@+id/gesturesOption"
@@ -95,6 +132,80 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Swipe on homepage to open apps"
+                    android:textColor="@color/void_white"
+                    android:textSize="12sp"
+                    android:fontFamily="monospace"
+                    android:alpha="0.6"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/void_white"
+                android:alpha="0.2" />
+
+            <!-- Screen Time Setting -->
+            <LinearLayout
+                android:id="@+id/screenTimeOption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Screen Time"
+                    android:textColor="@color/void_white"
+                    android:textSize="16sp"
+                    android:fontFamily="monospace" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="View app usage and screen time"
+                    android:textColor="@color/void_white"
+                    android:textSize="12sp"
+                    android:fontFamily="monospace"
+                    android:alpha="0.6"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/void_white"
+                android:alpha="0.2" />
+
+            <!-- Auto-Hide Setting -->
+            <LinearLayout
+                android:id="@+id/autoHideOption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingVertical="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Auto-Hide Apps"
+                    android:textColor="@color/void_white"
+                    android:textSize="16sp"
+                    android:fontFamily="monospace" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hide apps by time schedule or usage limits"
                     android:textColor="@color/void_white"
                     android:textSize="12sp"
                     android:fontFamily="monospace"

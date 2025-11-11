@@ -5,10 +5,13 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +26,7 @@ import kotlinx.coroutines.withContext
  */
 class AllAppsActivity : AppCompatActivity() {
 
+    private lateinit var headerText: TextView
     private lateinit var searchBar: EditText
     private lateinit var allAppsRecyclerView: RecyclerView
     private lateinit var prefsManager: PreferencesManager
@@ -38,8 +42,12 @@ class AllAppsActivity : AppCompatActivity() {
 
         prefsManager = PreferencesManager(this)
 
+        headerText = findViewById(R.id.headerText)
         searchBar = findViewById(R.id.searchBar)
         allAppsRecyclerView = findViewById(R.id.allAppsRecyclerView)
+
+        // Apply font size scaling
+        applyFontSizes()
 
         // Setup RecyclerView
         allAppsRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -49,6 +57,24 @@ class AllAppsActivity : AppCompatActivity() {
 
         // Setup search functionality
         setupSearch()
+
+        // Auto-focus search bar
+        searchBar.requestFocus()
+    }
+
+    /**
+     * Apply font size scaling to all text elements
+     */
+    private fun applyFontSizes() {
+        val fontSize = prefsManager.getFontSize()
+
+        // Base sizes from layout XML
+        val headerBaseSize = 16f
+        val searchBaseSize = 14f
+
+        // Apply scaled sizes
+        headerText.textSize = fontSize * headerBaseSize / 16f
+        searchBar.textSize = fontSize * searchBaseSize / 16f
     }
 
     /**
@@ -90,6 +116,19 @@ class AllAppsActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {}
         })
+
+        // Handle Enter key press to launch first result
+        searchBar.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                if (filteredApps.isNotEmpty()) {
+                    launchApp(filteredApps[0])
+                }
+                true
+            } else {
+                false
+            }
+        }
     }
 
     /**
@@ -99,11 +138,30 @@ class AllAppsActivity : AppCompatActivity() {
         filteredApps = if (query.isEmpty()) {
             allApps
         } else {
-            allApps.filter { app ->
+            val matches = allApps.filter { app ->
                 app.label.contains(query, ignoreCase = true)
+            }
+
+            // Sort by last opened time if 3 or fewer results
+            if (matches.size <= 3) {
+                matches.sortedByDescending { app ->
+                    UsageTrackingManager.getLastTimeUsed(this, app.packageName)
+                }
+            } else {
+                matches
             }
         }
         updateAppList()
+
+        // Auto-open if exactly one result
+        if (query.isNotEmpty() && filteredApps.size == 1) {
+            // Small delay to allow user to see the match
+            searchBar.postDelayed({
+                if (filteredApps.size == 1) {
+                    launchApp(filteredApps[0])
+                }
+            }, 300)
+        }
     }
 
     /**
@@ -135,26 +193,50 @@ class AllAppsActivity : AppCompatActivity() {
     }
 
     /**
-     * Show dialog to confirm adding app to homepage
+     * Show app stats dialog with pin/hide options
      */
     private fun showAddToHomepageDialog(app: App) {
-        AlertDialog.Builder(this)
-            .setTitle("Add to Homepage")
-            .setMessage("Add ${app.label} to homepage?")
-            .setPositiveButton("Add") { _, _ ->
-                addToHomepage(app)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+        val isOnHomepage = prefsManager.isAppOnHomepage(app.packageName)
+        val isHidden = prefsManager.isAppHidden(app.packageName)
+
+        val dialog = AppStatsDialog(
+            context = this,
+            app = app,
+            isOnHomepage = isOnHomepage,
+            isHidden = isHidden,
+            onPinToggle = { toggleHomepage(it) },
+            onHideToggle = { toggleHidden(it) }
+        )
+        dialog.show()
     }
 
     /**
-     * Add an app to the homepage
+     * Toggle app on/off homepage
      */
-    private fun addToHomepage(app: App) {
+    private fun toggleHomepage(app: App) {
         val currentHomepageApps = prefsManager.getHomepageApps().toMutableSet()
-        currentHomepageApps.add(app.packageName)
+        if (currentHomepageApps.contains(app.packageName)) {
+            currentHomepageApps.remove(app.packageName)
+        } else {
+            currentHomepageApps.add(app.packageName)
+        }
         prefsManager.saveHomepageApps(currentHomepageApps)
+    }
+
+    /**
+     * Toggle app hidden status
+     */
+    private fun toggleHidden(app: App) {
+        val currentHiddenApps = prefsManager.getHiddenApps().toMutableSet()
+        if (currentHiddenApps.contains(app.packageName)) {
+            currentHiddenApps.remove(app.packageName)
+        } else {
+            currentHiddenApps.add(app.packageName)
+        }
+        prefsManager.saveHiddenApps(currentHiddenApps)
+
+        // Reload apps to reflect the change
+        loadAllApps()
     }
 
     /**

@@ -190,6 +190,44 @@
                     android:alpha="0.6" />
             </LinearLayout>
 
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/void_white"
+                android:alpha="0.2" />
+
+            <!-- Double Tap to Lock Screen -->
+            <LinearLayout
+                android:id="@+id/doubleTapLockOption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Double Tap to Lock"
+                    android:textColor="@color/void_white"
+                    android:textSize="16sp"
+                    android:fontFamily="monospace" />
+
+                <TextView
+                    android:id="@+id/doubleTapLockValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OFF"
+                    android:textColor="@color/void_white"
+                    android:textSize="14sp"
+                    android:fontFamily="monospace"
+                    android:alpha="0.6" />
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 

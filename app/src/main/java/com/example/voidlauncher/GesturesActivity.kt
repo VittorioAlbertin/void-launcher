@@ -22,6 +22,8 @@ class GesturesActivity : AppCompatActivity() {
     private lateinit var gestureDownValue: TextView
     private lateinit var gestureLeftValue: TextView
     private lateinit var gestureRightValue: TextView
+    private lateinit var doubleTapLockOption: LinearLayout
+    private lateinit var doubleTapLockValue: TextView
 
     private lateinit var prefsManager: PreferencesManager
 
@@ -42,6 +44,8 @@ class GesturesActivity : AppCompatActivity() {
         gestureDownValue = findViewById(R.id.gestureDownValue)
         gestureLeftValue = findViewById(R.id.gestureLeftValue)
         gestureRightValue = findViewById(R.id.gestureRightValue)
+        doubleTapLockOption = findViewById(R.id.doubleTapLockOption)
+        doubleTapLockValue = findViewById(R.id.doubleTapLockValue)
 
         // Setup click listeners
         gestureUpOption.setOnClickListener {
@@ -60,8 +64,42 @@ class GesturesActivity : AppCompatActivity() {
             openGestureSelection("right")
         }
 
+        doubleTapLockOption.setOnClickListener {
+            toggleDoubleTapLock()
+        }
+
         // Load current gesture settings
         loadGestureSettings()
+
+        // Apply font size scaling
+        applyFontSizes()
+    }
+
+    /**
+     * Apply font size scaling to all text elements
+     */
+    private fun applyFontSizes() {
+        val fontSize = prefsManager.getFontSize()
+
+        // Base sizes from layout XML
+        val gestureBaseSize = 16f
+        val valueBaseSize = 14f
+
+        // Apply to gesture options - find TextViews within each option LinearLayout
+        val gestureOptions = listOf(
+            gestureUpOption, gestureDownOption, gestureLeftOption, gestureRightOption, doubleTapLockOption
+        )
+        val gestureValues = listOf(
+            gestureUpValue, gestureDownValue, gestureLeftValue, gestureRightValue, doubleTapLockValue
+        )
+
+        gestureOptions.forEach { option ->
+            (option.getChildAt(0) as? TextView)?.textSize = fontSize * gestureBaseSize / 16f
+        }
+
+        gestureValues.forEach { value ->
+            value.textSize = fontSize * valueBaseSize / 16f
+        }
     }
 
     /**
@@ -81,6 +119,24 @@ class GesturesActivity : AppCompatActivity() {
         gestureDownValue.text = getGestureAppName("down")
         gestureLeftValue.text = getGestureAppName("left")
         gestureRightValue.text = getGestureAppName("right")
+        updateDoubleTapLockDisplay()
+    }
+
+    /**
+     * Toggle double tap to lock screen setting
+     */
+    private fun toggleDoubleTapLock() {
+        val currentValue = prefsManager.getDoubleTapToLock()
+        prefsManager.saveDoubleTapToLock(!currentValue)
+        updateDoubleTapLockDisplay()
+    }
+
+    /**
+     * Update the display text for double tap lock setting
+     */
+    private fun updateDoubleTapLockDisplay() {
+        val enabled = prefsManager.getDoubleTapToLock()
+        doubleTapLockValue.text = if (enabled) "ON" else "OFF"
     }
 
     /**

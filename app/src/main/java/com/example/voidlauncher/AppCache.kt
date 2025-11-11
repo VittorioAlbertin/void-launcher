@@ -45,6 +45,15 @@ object AppCache {
                     continue
                 }
 
+                // Skip apps that should be auto-hidden
+                try {
+                    if (AutoHideManager.shouldHideApp(context, packageName, prefsManager)) {
+                        continue
+                    }
+                } catch (e: Exception) {
+                    // If auto-hide check fails, don't hide the app
+                }
+
                 val launchIntent = pm.getLaunchIntentForPackage(packageName)
 
                 if (launchIntent != null) {
@@ -67,6 +76,35 @@ object AppCache {
     fun clearCache() {
         synchronized(lock) {
             cachedApps = null
+        }
+    }
+
+    /**
+     * Load ALL apps including hidden ones (for HiddenAppsActivity)
+     */
+    suspend fun loadAllAppsIncludingHidden(context: Context): List<App> {
+        return withContext(Dispatchers.IO) {
+            val pm = context.packageManager
+            val appsList = mutableListOf<App>()
+
+            // Get all apps with a launcher intent
+            val intent = Intent(Intent.ACTION_MAIN, null)
+            intent.addCategory(Intent.CATEGORY_LAUNCHER)
+
+            val activities = pm.queryIntentActivities(intent, 0)
+
+            for (resolveInfo in activities) {
+                val label = resolveInfo.loadLabel(pm).toString()
+                val packageName = resolveInfo.activityInfo.packageName
+                val launchIntent = pm.getLaunchIntentForPackage(packageName)
+
+                if (launchIntent != null) {
+                    appsList.add(App(label, packageName, launchIntent))
+                }
+            }
+
+            // Sort alphabetically by label
+            appsList.sortedBy { it.label.lowercase() }
         }
     }
 }

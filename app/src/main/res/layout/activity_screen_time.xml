@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/void_black"
+    android:padding="16dp">
+
+    <!-- Header text -->
+    <TextView
+        android:id="@+id/headerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="screen time"
+        android:textColor="@color/void_white"
+        android:textSize="16sp"
+        android:fontFamily="monospace"
+        android:layout_marginBottom="8dp"
+        android:layout_alignParentTop="true" />
+
+    <!-- Separator line -->
+    <View
+        android:id="@+id/topSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/void_white"
+        android:layout_below="@id/headerText"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Today info -->
+    <TextView
+        android:id="@+id/todayText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topSeparator"
+        android:text="Today (since 3:00am)"
+        android:textColor="@color/void_white"
+        android:textSize="12sp"
+        android:fontFamily="monospace"
+        android:alpha="0.6"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Screen time card -->
+    <LinearLayout
+        android:id="@+id/statsCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/todayText"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Screen Time:"
+                android:textColor="@color/void_white"
+                android:textSize="14sp"
+                android:fontFamily="monospace" />
+
+            <TextView
+                android:id="@+id/totalScreenTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0h 0m"
+                android:textColor="@color/void_white"
+                android:textSize="14sp"
+                android:fontFamily="monospace" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Unlocks:"
+                android:textColor="@color/void_white"
+                android:textSize="14sp"
+                android:fontFamily="monospace" />
+
+            <TextView
+                android:id="@+id/unlocksCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/void_white"
+                android:textSize="14sp"
+                android:fontFamily="monospace" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Apps separator -->
+    <TextView
+        android:id="@+id/appsUsageLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/statsCard"
+        android:text="Apps Usage:"
+        android:textColor="@color/void_white"
+        android:textSize="14sp"
+        android:fontFamily="monospace"
+        android:layout_marginBottom="8dp" />
+
+    <View
+        android:id="@+id/appsSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/void_white"
+        android:layout_below="@id/appsUsageLabel"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Apps usage list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/appUsageRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/appsSeparator"
+        android:layout_above="@id/bottomSeparator"
+        android:scrollbars="none"
+        android:overScrollMode="never" />
+
+    <!-- Bottom separator -->
+    <View
+        android:id="@+id/bottomSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/void_white"
+        android:layout_above="@id/bottomControls"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Bottom controls -->
+    <LinearLayout
+        android:id="@+id/bottomControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <!-- History button -->
+        <TextView
+            android:id="@+id/historyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View History >"
+            android:textColor="@color/void_white"
+            android:textSize="14sp"
+            android:fontFamily="monospace"
+            android:paddingVertical="12dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <!-- Reset time setting -->
+        <LinearLayout
+            android:id="@+id/resetTimeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingVertical="12dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Reset Time:"
+                android:textColor="@color/void_white"
+                android:textSize="14sp"
+                android:fontFamily="monospace" />
+
+            <TextView
+                android:id="@+id/resetTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3:00am"
+                android:textColor="@color/void_white"
+                android:textSize="14sp"
+                android:fontFamily="monospace" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="    [Change]"
+                android:textColor="@color/void_white"
+                android:textSize="14sp"
+                android:fontFamily="monospace"
+                android:alpha="0.6" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -38,7 +38,21 @@
         android:gravity="center"
         android:format12Hour="hh:mm a"
         android:format24Hour="HH:mm"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="4dp" />
+
+    <!-- Date display -->
+    <TextView
+        android:id="@+id/dateText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/digitalClock"
+        android:textColor="@color/void_white"
+        android:textSize="14sp"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:alpha="0.6"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
 
     <!-- Clock separator line -->
     <View
@@ -46,7 +60,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/void_white"
-        android:layout_below="@id/digitalClock"
+        android:layout_below="@id/dateText"
         android:layout_marginBottom="16dp" />
 
     <!-- App list -->

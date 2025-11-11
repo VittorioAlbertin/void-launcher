@@ -17,12 +17,25 @@ class PreferencesManager(context: Context) {
         private const val KEY_HIDDEN_APPS = "hidden_apps"
         private const val KEY_FONT_SIZE = "font_size"
         private const val DEFAULT_FONT_SIZE = 16f
+        private const val KEY_SHOW_DATE = "show_date"
+        private const val DEFAULT_SHOW_DATE = false
+        private const val KEY_CLOCK_SIZE = "clock_size"
+        private const val DEFAULT_CLOCK_SIZE = 24f
+        private const val KEY_CLOCK_24H = "clock_24h"
+        private const val DEFAULT_CLOCK_24H = true
+        private const val KEY_CLOCK_APP = "clock_app"
+        private const val KEY_SHOW_DAY_OF_WEEK = "show_day_of_week"
+        private const val DEFAULT_SHOW_DAY_OF_WEEK = false
 
         // Gesture app keys
         private const val KEY_GESTURE_UP = "gesture_up"
         private const val KEY_GESTURE_DOWN = "gesture_down"
         private const val KEY_GESTURE_LEFT = "gesture_left"
         private const val KEY_GESTURE_RIGHT = "gesture_right"
+
+        // Double tap to lock screen
+        private const val KEY_DOUBLE_TAP_LOCK = "double_tap_lock"
+        private const val DEFAULT_DOUBLE_TAP_LOCK = false
 
         // Default homepage apps if none are selected
         private val DEFAULT_HOMEPAGE_APPS = listOf(
@@ -151,5 +164,119 @@ class PreferencesManager(context: Context) {
      */
     fun isGestureSet(direction: String): Boolean {
         return getGestureApp(direction) != null
+    }
+
+    /**
+     * Get whether date should be shown under clock
+     */
+    fun getShowDate(): Boolean {
+        return prefs.getBoolean(KEY_SHOW_DATE, DEFAULT_SHOW_DATE)
+    }
+
+    /**
+     * Save whether date should be shown under clock
+     */
+    fun saveShowDate(showDate: Boolean) {
+        prefs.edit().putBoolean(KEY_SHOW_DATE, showDate).apply()
+    }
+
+    /**
+     * Get clock size in SP
+     */
+    fun getClockSize(): Float {
+        return prefs.getFloat(KEY_CLOCK_SIZE, DEFAULT_CLOCK_SIZE)
+    }
+
+    /**
+     * Save clock size in SP
+     */
+    fun saveClockSize(size: Float) {
+        prefs.edit().putFloat(KEY_CLOCK_SIZE, size).apply()
+    }
+
+    /**
+     * Get whether to use 24h format
+     */
+    fun getClock24h(): Boolean {
+        return prefs.getBoolean(KEY_CLOCK_24H, DEFAULT_CLOCK_24H)
+    }
+
+    /**
+     * Save whether to use 24h format
+     */
+    fun saveClock24h(use24h: Boolean) {
+        prefs.edit().putBoolean(KEY_CLOCK_24H, use24h).apply()
+    }
+
+    /**
+     * Get clock app package name (null = not set)
+     */
+    fun getClockApp(): String? {
+        return prefs.getString(KEY_CLOCK_APP, null)
+    }
+
+    /**
+     * Save clock app package name
+     */
+    fun saveClockApp(packageName: String?) {
+        prefs.edit().putString(KEY_CLOCK_APP, packageName).apply()
+    }
+
+    /**
+     * Get whether to show day of week with clock
+     */
+    fun getShowDayOfWeek(): Boolean {
+        return prefs.getBoolean(KEY_SHOW_DAY_OF_WEEK, DEFAULT_SHOW_DAY_OF_WEEK)
+    }
+
+    /**
+     * Save whether to show day of week with clock
+     */
+    fun saveShowDayOfWeek(show: Boolean) {
+        prefs.edit().putBoolean(KEY_SHOW_DAY_OF_WEEK, show).apply()
+    }
+
+    /**
+     * Get auto-hide rules for a specific app
+     * Returns JSON string or null if no rules set
+     */
+    fun getAutoHideRules(packageName: String): String? {
+        return prefs.getString("auto_hide_$packageName", null)
+    }
+
+    /**
+     * Save auto-hide rules for a specific app
+     * Pass null to remove rules
+     */
+    fun saveAutoHideRules(packageName: String, rulesJson: String?) {
+        if (rulesJson == null) {
+            prefs.edit().remove("auto_hide_$packageName").apply()
+        } else {
+            prefs.edit().putString("auto_hide_$packageName", rulesJson).apply()
+        }
+    }
+
+    /**
+     * Get all package names that have auto-hide rules
+     */
+    fun getAllAutoHidePackages(): Set<String> {
+        return prefs.all.keys
+            .filter { it.startsWith("auto_hide_") }
+            .map { it.removePrefix("auto_hide_") }
+            .toSet()
+    }
+
+    /**
+     * Get whether double tap to lock screen is enabled
+     */
+    fun getDoubleTapToLock(): Boolean {
+        return prefs.getBoolean(KEY_DOUBLE_TAP_LOCK, DEFAULT_DOUBLE_TAP_LOCK)
+    }
+
+    /**
+     * Save whether double tap to lock screen is enabled
+     */
+    fun saveDoubleTapToLock(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_DOUBLE_TAP_LOCK, enabled).apply()
     }
 }

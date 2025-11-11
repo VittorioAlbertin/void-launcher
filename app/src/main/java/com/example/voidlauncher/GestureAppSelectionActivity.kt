@@ -62,6 +62,24 @@ class GestureAppSelectionActivity : AppCompatActivity() {
 
         // Display apps
         updateAppList()
+
+        // Apply font size scaling
+        applyFontSizes()
+    }
+
+    /**
+     * Apply font size scaling to all text elements
+     */
+    private fun applyFontSizes() {
+        val fontSize = prefsManager.getFontSize()
+
+        // Base sizes from layout XML
+        val headerBaseSize = 16f
+        val searchBaseSize = 14f
+
+        // Apply scaled sizes
+        headerText.textSize = fontSize * headerBaseSize / 16f
+        searchBar.textSize = fontSize * searchBaseSize / 16f
     }
 
     /**

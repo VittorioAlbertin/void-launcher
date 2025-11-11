@@ -1,6 +1,10 @@
 package com.example.voidlauncher
 
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -16,6 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Main launcher screen showing curated list of essential apps
@@ -24,11 +31,16 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var headerText: TextView
     private lateinit var digitalClock: TextClock
+    private lateinit var dateText: TextView
     private lateinit var appRecyclerView: RecyclerView
     private lateinit var allAppsText: TextView
     private lateinit var settingsText: TextView
     private lateinit var prefsManager: PreferencesManager
     private lateinit var gestureDetector: GestureDetector
+    private lateinit var clockGestureDetector: GestureDetector
+    private lateinit var screenReceiver: ScreenReceiver
+    private lateinit var devicePolicyManager: DevicePolicyManager
+    private lateinit var adminComponentName: ComponentName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,14 +51,35 @@ class MainActivity : AppCompatActivity() {
 
         prefsManager = PreferencesManager(this)
 
+        // Initialize device policy manager for lock screen
+        devicePolicyManager = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        adminComponentName = ComponentName(this, VoidDeviceAdminReceiver::class.java)
+
         headerText = findViewById(R.id.headerText)
         digitalClock = findViewById(R.id.digitalClock)
+        dateText = findViewById(R.id.dateText)
         appRecyclerView = findViewById(R.id.appRecyclerView)
         allAppsText = findViewById(R.id.allAppsText)
         settingsText = findViewById(R.id.settingsText)
 
+        // Apply font size scaling to all text elements
+        applyFontSizes()
+
+        // Apply clock settings
+        applyClockSettings()
+
+        // Update date display
+        updateDateDisplay()
+
         // Setup gesture detector
         gestureDetector = GestureDetector(this, GestureListener())
+
+        // Setup clock gesture detector (single tap and double tap)
+        clockGestureDetector = GestureDetector(this, ClockGestureListener())
+        digitalClock.setOnTouchListener { _, event ->
+            clockGestureDetector.onTouchEvent(event)
+            true
+        }
 
         // Setup RecyclerView
         appRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -70,6 +103,67 @@ class MainActivity : AppCompatActivity() {
 
         // Preload all apps in background for instant "all apps" display
         preloadAllApps()
+
+        // Register screen on/off receiver
+        registerScreenReceiver()
+
+        // Check for daily reset
+        UsageTrackingManager.checkAndPerformDailyReset(this)
+    }
+
+    /**
+     * Apply font size scaling to all text elements
+     */
+    private fun applyFontSizes() {
+        val fontSize = prefsManager.getFontSize()
+
+        // Base sizes from layout XML
+        val headerBaseSize = 16f
+        val dateBaseSize = 14f
+        val bottomTextBaseSize = 16f
+
+        // Apply scaled sizes
+        headerText.textSize = fontSize * headerBaseSize / 16f
+        // Clock size is independent and set by applyClockSettings()
+        dateText.textSize = fontSize * dateBaseSize / 16f
+        allAppsText.textSize = fontSize * bottomTextBaseSize / 16f
+        settingsText.textSize = fontSize * bottomTextBaseSize / 16f
+    }
+
+    /**
+     * Apply clock customization settings
+     */
+    private fun applyClockSettings() {
+        val clockSize = prefsManager.getClockSize()
+        val use24h = prefsManager.getClock24h()
+
+        // Apply clock size
+        digitalClock.textSize = clockSize
+
+        // Apply 12h/24h format
+        digitalClock.format12Hour = if (use24h) null else "hh:mm a"
+        digitalClock.format24Hour = if (use24h) "HH:mm" else null
+    }
+
+    /**
+     * Update date display based on settings
+     */
+    private fun updateDateDisplay() {
+        val showDate = prefsManager.getShowDate()
+        val showDayOfWeek = prefsManager.getShowDayOfWeek()
+
+        // Show if either date or day of week is enabled
+        dateText.visibility = if (showDate || showDayOfWeek) View.VISIBLE else View.GONE
+
+        if (showDate || showDayOfWeek) {
+            val format = when {
+                showDate && showDayOfWeek -> "EEEE, MMMM d" // "Monday, January 15"
+                showDayOfWeek -> "EEEE" // "Monday"
+                else -> "MMMM d" // "January 15"
+            }
+            val dateFormat = SimpleDateFormat(format, Locale.getDefault())
+            dateText.text = dateFormat.format(Date())
+        }
     }
 
     /**
@@ -133,6 +227,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * Register screen receiver for tracking screen on/off
+     */
+    private fun registerScreenReceiver() {
+        screenReceiver = ScreenReceiver()
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_SCREEN_ON)
+            addAction(Intent.ACTION_SCREEN_OFF)
+        }
+        registerReceiver(screenReceiver, filter)
+    }
+
+    /**
      * Launch an app
      */
     private fun launchApp(app: App) {
@@ -182,13 +288,18 @@ class MainActivity : AppCompatActivity() {
      * Setup gesture detection on clock and app list areas
      */
     private fun setupGestureDetection() {
-        val touchListener = View.OnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event)
-            false // Allow other touch events to pass through
+        val touchListener = View.OnTouchListener { view, event ->
+            val gestureHandled = gestureDetector.onTouchEvent(event)
+            // For app list, allow other touch events if gesture wasn't handled
+            // This allows scrolling and clicking apps while still detecting swipes/double tap
+            if (view == appRecyclerView) {
+                !gestureHandled
+            } else {
+                true
+            }
         }
 
-        // Apply gesture detection to clock and app list
-        digitalClock.setOnTouchListener(touchListener)
+        // Apply gesture detection to app list (not clock, it has its own handler)
         appRecyclerView.setOnTouchListener(touchListener)
     }
 
@@ -224,12 +335,90 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Gesture listener for detecting swipes
+     * Gesture listener for detecting single tap and double tap on clock
+     */
+    private inner class ClockGestureListener : GestureDetector.SimpleOnGestureListener() {
+        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            openClockApp()
+            return true
+        }
+
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            lockScreen()
+            return true
+        }
+    }
+
+    /**
+     * Open the configured clock app or default clock app
+     */
+    private fun openClockApp() {
+        val clockAppPackage = prefsManager.getClockApp()
+
+        if (clockAppPackage != null) {
+            // Open specific clock app selected by user
+            try {
+                val launchIntent = packageManager.getLaunchIntentForPackage(clockAppPackage)
+                if (launchIntent != null) {
+                    startActivity(launchIntent)
+                    return
+                }
+            } catch (e: Exception) {
+                // Fall through to default
+            }
+        }
+
+        // Open default system clock app (AlarmClock intent)
+        try {
+            val intent = android.content.Intent(android.provider.AlarmClock.ACTION_SHOW_ALARMS)
+            startActivity(intent)
+        } catch (e: Exception) {
+            // No clock app available, try generic intent
+            try {
+                val intent = android.content.Intent(android.content.Intent.ACTION_MAIN)
+                intent.addCategory(android.content.Intent.CATEGORY_LAUNCHER)
+                intent.`package` = "com.google.android.deskclock"
+                startActivity(intent)
+            } catch (e2: Exception) {
+                // No clock app found
+            }
+        }
+    }
+
+    /**
+     * Lock the screen using device admin
+     */
+    private fun lockScreen() {
+        if (devicePolicyManager.isAdminActive(adminComponentName)) {
+            devicePolicyManager.lockNow()
+        } else {
+            // Request device admin permission
+            val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
+            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponentName)
+            intent.putExtra(
+                DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                "VoidLauncher needs device admin permission to lock the screen when you double tap the clock."
+            )
+            startActivity(intent)
+        }
+    }
+
+    /**
+     * Gesture listener for detecting swipes and double tap
      */
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
 
         private val SWIPE_THRESHOLD = 100
         private val SWIPE_VELOCITY_THRESHOLD = 100
+
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            // Check if double tap to lock is enabled
+            if (prefsManager.getDoubleTapToLock()) {
+                lockScreen()
+                return true
+            }
+            return false
+        }
 
         override fun onFling(
             e1: MotionEvent?,
@@ -305,5 +494,21 @@ class MainActivity : AppCompatActivity() {
         preloadAllApps()
         // Update All Apps button visibility based on gestures
         updateAllAppsButtonVisibility()
+        // Reapply font sizes in case they changed in settings
+        applyFontSizes()
+        // Reapply clock settings
+        applyClockSettings()
+        // Update date display in case setting changed
+        updateDateDisplay()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Unregister screen receiver
+        try {
+            unregisterReceiver(screenReceiver)
+        } catch (e: Exception) {
+            // Receiver already unregistered
+        }
     }
 }

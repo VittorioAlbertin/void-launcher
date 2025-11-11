@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/void_black"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Header -->
+    <TextView
+        android:id="@+id/headerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Auto-Hide Settings"
+        android:textColor="@color/void_white"
+        android:textSize="16sp"
+        android:fontFamily="monospace"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Separator line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/void_white"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Description -->
+    <TextView
+        android:id="@+id/descriptionText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Configure apps to automatically hide during specific hours or after usage limits."
+        android:textColor="@color/void_white"
+        android:textSize="12sp"
+        android:fontFamily="monospace"
+        android:alpha="0.7"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Search bar -->
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search apps..."
+        android:textColor="@color/void_white"
+        android:textColorHint="@color/void_white"
+        android:alpha="0.7"
+        android:textSize="14sp"
+        android:fontFamily="monospace"
+        android:background="@android:color/transparent"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="4dp"
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Search separator -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/void_white"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Apps list with auto-hide rules -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/appsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
+        android:overScrollMode="never" />
+
+</LinearLayout>
