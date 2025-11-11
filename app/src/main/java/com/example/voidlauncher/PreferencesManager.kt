@@ -35,7 +35,7 @@ class PreferencesManager(context: Context) {
 
         // Double tap to lock screen
         private const val KEY_DOUBLE_TAP_LOCK = "double_tap_lock"
-        private const val DEFAULT_DOUBLE_TAP_LOCK = false
+        private const val DEFAULT_DOUBLE_TAP_LOCK = true
 
         // Default homepage apps if none are selected
         private val DEFAULT_HOMEPAGE_APPS = listOf(
@@ -47,10 +47,10 @@ class PreferencesManager(context: Context) {
         )
 
         // Default gesture apps
-        private const val DEFAULT_GESTURE_UP = "com.android.chrome"
+        private const val DEFAULT_GESTURE_UP = "com.voidlauncher.ALL_APPS"
         private const val DEFAULT_GESTURE_DOWN = "com.android.camera2"
         private const val DEFAULT_GESTURE_LEFT = "com.whatsapp"
-        private const val DEFAULT_GESTURE_RIGHT = "com.google.android.apps.messaging"
+        private const val DEFAULT_GESTURE_RIGHT = "com.android.camera2"
     }
 
     /**

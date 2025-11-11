@@ -21,4 +21,7 @@
     <string name="font_medium">Medium (16sp)</string>
     <string name="font_large">Large (18sp)</string>
     <string name="font_xlarge">Extra Large (20sp)</string>
+
+    <!-- Accessibility Service -->
+    <string name="accessibility_service_description">Allows Void Launcher to lock the screen with double-tap while keeping biometric unlock enabled</string>
 </resources>

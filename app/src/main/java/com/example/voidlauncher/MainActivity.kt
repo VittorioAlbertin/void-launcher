@@ -1,16 +1,16 @@
 package com.example.voidlauncher
 
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.provider.Settings
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import android.view.accessibility.AccessibilityManager
 import android.widget.TextView
 import android.widget.TextClock
 import androidx.appcompat.app.AlertDialog
@@ -39,8 +39,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var gestureDetector: GestureDetector
     private lateinit var clockGestureDetector: GestureDetector
     private lateinit var screenReceiver: ScreenReceiver
-    private lateinit var devicePolicyManager: DevicePolicyManager
-    private lateinit var adminComponentName: ComponentName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,10 +48,6 @@ class MainActivity : AppCompatActivity() {
         hideSystemUI()
 
         prefsManager = PreferencesManager(this)
-
-        // Initialize device policy manager for lock screen
-        devicePolicyManager = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-        adminComponentName = ComponentName(this, VoidDeviceAdminReceiver::class.java)
 
         headerText = findViewById(R.id.headerText)
         digitalClock = findViewById(R.id.digitalClock)
@@ -386,21 +380,41 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Lock the screen using device admin
+     * Lock the screen using accessibility service (allows biometric unlock)
      */
     private fun lockScreen() {
-        if (devicePolicyManager.isAdminActive(adminComponentName)) {
-            devicePolicyManager.lockNow()
+        if (isAccessibilityServiceEnabled()) {
+            // Use accessibility service to lock screen (allows biometric unlock)
+            val intent = Intent(this, LockScreenAccessibilityService::class.java)
+            intent.action = LockScreenAccessibilityService.ACTION_LOCK_SCREEN
+            startService(intent)
         } else {
-            // Request device admin permission
-            val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
-            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponentName)
-            intent.putExtra(
-                DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                "VoidLauncher needs device admin permission to lock the screen when you double tap the clock."
-            )
-            startActivity(intent)
+            // Prompt user to enable accessibility service
+            AlertDialog.Builder(this)
+                .setTitle("Enable Accessibility Service")
+                .setMessage("To lock the screen with biometric unlock enabled, please enable Void Launcher accessibility service in Settings.\n\nGo to Settings > Accessibility > Void Launcher and turn it on.")
+                .setPositiveButton("Open Settings") { _, _ ->
+                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                    startActivity(intent)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
+    }
+
+    /**
+     * Check if the accessibility service is enabled
+     */
+    private fun isAccessibilityServiceEnabled(): Boolean {
+        val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+        val enabledServices = Settings.Secure.getString(
+            contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        )
+        val colonSplitter = enabledServices?.split(":")
+        return colonSplitter?.any {
+            it.contains(packageName) && it.contains(LockScreenAccessibilityService::class.java.simpleName)
+        } ?: false
     }
 
     /**
